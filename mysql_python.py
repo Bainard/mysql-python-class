@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import MySQLdb, sys
+import mysql.connector, sys
 from collections import OrderedDict
 
 class MysqlPython(object):
@@ -20,11 +20,11 @@ class MysqlPython(object):
 
     def __new__(cls, *args, **kwargs):
         if not cls.__instance or not cls.__database:
-             cls.__instance = super(MysqlPython, cls).__new__(cls,*args,**kwargs)
+             cls.__instance = super(MysqlPython, cls).__new__(cls)
         return cls.__instance
     ## End def __new__
 
-    def __init__(self, host='localhost', user='root', password='', database=''):
+    def __init__(self, host='127.0.0.1', user='root', password='', database=''):
         self.__host     = host
         self.__user     = user
         self.__password = password
@@ -33,11 +33,11 @@ class MysqlPython(object):
 
     def __open(self):
         try:
-            cnx = MySQLdb.connect(self.__host, self.__user, self.__password, self.__database)
+            cnx = mysql.connector.connect(host=self.__host, user=self.__user, password=self.__password, database=self.__database)
             self.__connection = cnx
             self.__session    = cnx.cursor()
-        except MySQLdb.Error as e:
-            print "Error %d: %s" % (e.args[0],e.args[1])
+        except mysql.connector.Error as e:
+            print("Error %d: %s" % (e.args[0],e.args[1]))
     ## End def __open
 
     def __close(self):
@@ -114,8 +114,13 @@ class MysqlPython(object):
             query += " VALUES(" + ",".join(["%s"]*len(values)) + ")"
 
         self.__open()
-        self.__session.execute(query, values)
-        self.__connection.commit()
+        #print(values)
+        #print(query)
+        try:
+            self.__session.execute(query, values)
+            self.__connection.commit()
+        except:
+            pass
         self.__close()
         return self.__session.lastrowid
     ## End def insert
