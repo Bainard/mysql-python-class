@@ -6,7 +6,7 @@ MySQL Python3 Class
 **Python MySQL class** helps the python developers to connect with MySQL and use queries like: SELECT (one and more conditions), INSERT, UPDATE, DELETE in an easy and fast way.
 
 ## Fork difference.
-This fork is using  MySQL Python Connector instead of MySQLdb https://dev.mysql.com/downloads/connector/python/.
+This fork is using  MySQL Python Connector (https://dev.mysql.com/downloads/connector/python/) instead of MySQLdb. 
 Changed some code to make it work with Python 3. 
 Not sure if it will still work with Python 2.
 
