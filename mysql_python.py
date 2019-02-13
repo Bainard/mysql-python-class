@@ -65,6 +65,7 @@ class MysqlPython(object):
         ## End if where
 
         self.__open()
+        #print(query, values)
         self.__session.execute(query, values)
         number_rows = self.__session.rowcount
         number_columns = len(self.__session.description)
@@ -119,8 +120,13 @@ class MysqlPython(object):
         try:
             self.__session.execute(query, values)
             self.__connection.commit()
-        except:
-            pass
+            print(1)
+        except mysql.connector.Error as e:
+            if e.errno == 1062:
+                #print("key already exists")
+                return(0)
+                #print("Error code:",e.errno)
+                #print("not inserted: %s" % values)
         self.__close()
         return self.__session.lastrowid
     ## End def insert
