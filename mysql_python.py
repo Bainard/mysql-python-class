@@ -65,7 +65,6 @@ class MysqlPython(object):
         ## End if where
 
         self.__open()
-        print(query, values)
         self.__session.execute(query, values)
         number_rows = self.__session.rowcount
         number_columns = len(self.__session.description)
