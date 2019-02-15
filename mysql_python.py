@@ -65,7 +65,7 @@ class MysqlPython(object):
         ## End if where
 
         self.__open()
-        #print(query, values)
+        print(query, values)
         self.__session.execute(query, values)
         number_rows = self.__session.rowcount
         number_columns = len(self.__session.description)
@@ -93,6 +93,7 @@ class MysqlPython(object):
         query += " WHERE %s" % where
 
         self.__open()
+        print(query)
         self.__session.execute(query, values)
         self.__connection.commit()
 
