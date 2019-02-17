@@ -123,8 +123,8 @@ class MysqlPython(object):
             print(1)
         except mysql.connector.Error as e:
             if e.errno == 1062:
+                print(e)
                 #print("key already exists")
-                return(0)
                 #print("Error code:",e.errno)
                 #print("not inserted: %s" % values)
         self.__close()
