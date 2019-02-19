@@ -69,7 +69,8 @@ class MysqlPython(object):
         number_rows = self.__session.rowcount
         number_columns = len(self.__session.description)
 
-        if number_rows >= 1 and number_columns > 1:
+        # if number_rows >= 1 and number_columns > 1: #somehow number of rows is always 0
+        if number_columns > 1:
             result = [item for item in self.__session.fetchall()]
         else:
             result = [item[0] for item in self.__session.fetchall()]
@@ -103,6 +104,16 @@ class MysqlPython(object):
         return update_rows
     ## End function update
 
+    def insertdict(self, table, xdict=None):
+        print(xdict.keys())
+        qmarks = ', '.join('?' * len(xdict))
+        print(qmarks)
+        query = "Insert Into %s (%s) Values (%s)" % (table,qmarks,qmarks)
+        print(query)
+        x = (query,xdict.keys(), xdict.values())
+        print(x)
+
+
     def insert(self, table, *args, **kwargs):
         values = None
         query = "INSERT INTO %s " % table
@@ -120,7 +131,6 @@ class MysqlPython(object):
         try:
             self.__session.execute(query, values)
             self.__connection.commit()
-            print(1)
         except mysql.connector.Error as e:
             if e.errno == 1062:
                 print(e)
