@@ -31,13 +31,20 @@ class MysqlPython(object):
         self.__database = database
     ## End def __init__
 
-    def __open(self):
+    def __open(self, **kwargs):
         try:
             cnx = mysql.connector.connect(host=self.__host, user=self.__user, password=self.__password, database=self.__database)
             self.__connection = cnx
-            self.__session    = cnx.cursor()
+            if 'dictionary' in kwargs and kwargs['dictionary'] == True:
+                print("returning results in dictionary form")
+                self.__session = cnx.cursor(dictionary=True)
+            else:
+                self.__session = cnx.cursor()
         except mysql.connector.Error as e:
-            print("Error %d: %s" % (e.args[0],e.args[1]))
+            if e.errno == 2003:
+                print("mysql server down")
+            else:
+                print("Error %d: %s" % (e.args[0],e.args[1]))
     ## End def __open
 
     def __close(self):
@@ -63,7 +70,6 @@ class MysqlPython(object):
         if where:
             query += " WHERE %s" % where
         ## End if where
-
         self.__open()
         self.__session.execute(query, values)
         number_rows = self.__session.rowcount
