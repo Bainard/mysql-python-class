@@ -110,15 +110,25 @@ class MysqlPython(object):
         return update_rows
     ## End function update
 
-    def insertdict(self, table, xdict=None):
-        print(xdict.keys())
-        qmarks = ', '.join('?' * len(xdict))
-        print(qmarks)
-        query = "Insert Into %s (%s) Values (%s)" % (table,qmarks,qmarks)
-        print(query)
-        x = (query,xdict.keys(), xdict.values())
-        print(x)
-
+    def insertdict(self,table,data):
+       """
+       :param table: mysql table to insert into
+       :param data: a dictionary.
+       :return: last row changed if auto-increment on.
+       """
+        qmarks = ", ".join(['%s'] * len(data))
+        stmt = "insert into `{table}` ({columns}) values ({values});".format(table=table,
+                                                                             columns=",".join(data.keys()),
+                                                                             values=qmarks)
+        self.__open()
+        try:
+            self.__session.execute(stmt, list(data.values()))
+            self.__connection.commit()
+        except mysql.connector.Error as e:
+            print(e)
+        finally:
+            self.__close()
+        return self.__session.lastrowid
 
     def insert(self, table, *args, **kwargs):
         values = None
