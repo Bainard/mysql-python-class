@@ -110,12 +110,49 @@ class MysqlPython(object):
         return update_rows
     ## End function update
 
+
+    def selectdict(self, table, where=None, *args, **kwargs):
+        "Returns a list of dict's"
+        result = None
+        query = 'SELECT '
+        keys = args
+        values = tuple(kwargs.values())
+        l = len(keys) - 1
+
+        for i, key in enumerate(keys):
+            query += "`"+key+"`"
+            if i < l:
+                query += ","
+        ## End for keys
+
+        query += 'FROM %s' % table
+
+        if where:
+            query += " WHERE %s" % where
+        ## End if where
+        self.__open(dictionary=True)
+        self.__session.execute(query, values)
+        number_rows = self.__session.rowcount
+        number_columns = len(self.__session.description)
+
+        # if number_rows >= 1 and number_columns > 1: #somehow number of rows is always 0
+        #if number_columns > 1:
+            #result = [item for item in self.__session.fetchall()]
+        #else:
+            #result = [item[0] for item in self.__session.fetchall()]
+        result = self.__session.fetchall()
+        self.__close()
+
+        return result
+    ## End def select
+
+
     def insertdict(self,table,data):
-       """
-       :param table: mysql table to insert into
-       :param data: a dictionary.
-       :return: last row changed if auto-increment on.
-       """
+        """
+        :param table: mysql table to insert into
+        :param data: a dictionary.
+        :return: last row changed if auto-increment on.
+        """
         qmarks = ", ".join(['%s'] * len(data))
         stmt = "insert into `{table}` ({columns}) values ({values});".format(table=table,
                                                                              columns=",".join(data.keys()),
