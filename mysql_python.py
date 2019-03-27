@@ -36,7 +36,7 @@ class MysqlPython(object):
             cnx = mysql.connector.connect(host=self.__host, user=self.__user, password=self.__password, database=self.__database)
             self.__connection = cnx
             if 'dictionary' in kwargs and kwargs['dictionary'] == True:
-                print("returning results in dictionary form")
+                # print("returning results in dictionary form")
                 self.__session = cnx.cursor(dictionary=True)
             else:
                 self.__session = cnx.cursor()
