@@ -110,7 +110,6 @@ class MysqlPython(object):
         return update_rows
     ## End function update
 
-
     def selectdict(self, table, where=None, *args, **kwargs):
         "Returns a list of dict's"
         result = None
@@ -145,7 +144,6 @@ class MysqlPython(object):
 
         return result
     ## End def select
-
 
     def insertdict(self,table,data):
         """
