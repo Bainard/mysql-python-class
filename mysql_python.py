@@ -99,7 +99,7 @@ class MysqlPython(object):
         query += " WHERE %s" % where
 
         self.__open()
-        print(query)
+        # print(query)
         self.__session.execute(query, values)
         self.__connection.commit()
 
