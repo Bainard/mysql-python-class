@@ -2,6 +2,8 @@
 # coding=utf-8
 import mysql.connector, sys
 from collections import OrderedDict
+import logging
+logging = logging.getLogger(__name__)
 
 class MysqlPython(object):
     """
@@ -35,15 +37,15 @@ class MysqlPython(object):
             cnx = mysql.connector.connect(host=self.__host, user=self.__user, password=self.__password, database=self.__database)
             self.__connection = cnx
             if 'dictionary' in kwargs and kwargs['dictionary'] == True:
-                # print("returning results in dictionary form")
+                # logging.debug("returning results in dictionary form")
                 self.__session = cnx.cursor(dictionary=True)
             else:
                 self.__session = cnx.cursor()
         except mysql.connector.Error as e:
             if e.errno == 2003:
-                print("mysql server down")
+                logging.info("mysql server down")
             else:
-                print("Error %d: %s" % (e.args[0],e.args[1]))
+                logging.error("Error %d: %s" % (e.args[0],e.args[1]))
     ## End def __open
 
     def __close(self):
@@ -98,7 +100,7 @@ class MysqlPython(object):
         query += " WHERE %s" % where
 
         self.__open()
-        # print(query)
+        # logging.info(query)
         self.__session.execute(query, values)
         self.__connection.commit()
 
@@ -159,7 +161,7 @@ class MysqlPython(object):
             self.__session.execute(stmt, list(data.values()))
             self.__connection.commit()
         except mysql.connector.Error as e:
-            print(e)
+            logging.error(e)
         finally:
             self.__close()
         return self.__session.lastrowid
@@ -176,17 +178,17 @@ class MysqlPython(object):
             query += " VALUES(" + ",".join(["%s"]*len(values)) + ")"
 
         self.__open()
-        #print(values)
-        #print(query)
+        #logging.debug(values)
+        #logging.debug(query)
         try:
             self.__session.execute(query, values)
             self.__connection.commit()
         except mysql.connector.Error as e:
             if e.errno == 1062:
-                print(e)
-                #print("key already exists")
-                #print("Error code:",e.errno)
-                #print("not inserted: %s" % values)
+                logging.error(e)
+                #logging.debug("key already exists")
+                #logging.debug("Error code:",e.errno)
+                #logging.debug("not inserted: %s" % values)
         self.__close()
         return self.__session.lastrowid
     ## End def insert
